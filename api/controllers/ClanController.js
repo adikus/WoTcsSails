@@ -36,13 +36,6 @@ module.exports = {
         });
     },
 
-    subscribe: function(req, res) {
-        if(req.socket){
-            Clan.subscribe(req.socket);
-            res.json({status: 'ok'});
-        }
-    },
-
   /**
    * Overrides for the settings in `config/controllers.js`
    * (specific to ClanController)
