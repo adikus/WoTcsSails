@@ -72,8 +72,11 @@ module.exports = {
         })
     },
 
-    getByTag: function(tag, callback) {
-        this.get({tag: tag}, callback);
+    getByTag: function(region, tag, callback) {
+        if(!isFinite(RegionService[region.toUpperCase()]))return callback('Bad region.', null);
+        var where = Clan.inRegionWhere(RegionService[region.toUpperCase()]);
+        where.tag = tag;
+        return this.get(where, callback);
     }
 
 };

@@ -39,6 +39,11 @@ module.exports.routes = {
   'get /clans/:id?': {
       controller    : 'clan',
       action        : 'find'
+  },
+
+  'get /clans/:region/:tag': {
+      controller    : 'clan',
+      action        : 'find'
   }
 
   /*

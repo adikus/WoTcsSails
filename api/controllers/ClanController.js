@@ -18,15 +18,15 @@
 module.exports = {
     
     find: function(req, res) {
-        var id = parseInt(req.params.id);
-        if(isNaN(id)){
-            return ClanCache.getByTag(req.params.id, function(err, clan, fromCache) {
+        if(req.params.region && req.params.tag){
+            return ClanCache.getByTag(req.params.region, req.params.tag, function(err, clan, fromCache) {
                 if (err) return res.send(err, 500);
                 if(!clan) return res.send("Clan not found.", 404);
                 return res.json({status: 'ok', clan: clan.getData(), fromCache: fromCache});
             });
         }
-        if(id <= 0){
+        var id = parseInt(req.params.id);
+        if(isNaN(id) || id <= 0){
             return res.send("Bad clan id.", 500);
         }
         return ClanCache.get(id, function(err, clan, fromCache) {
