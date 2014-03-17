@@ -9,7 +9,7 @@
 module.exports = {
 
     adapter: 'memory',
-    maxAge: 60000,
+    maxAge: 5000,
 
     autoCreatedAt: false,
     autoUpdatedAt: false,
@@ -18,31 +18,6 @@ module.exports = {
 
         getData: function() {
             return Clan._instanceMethods.getData.apply(this);
-        },
-
-        setRemoveTimer: function(isNew) {
-            //TODO: do this somewhere else (middleware)
-            var self = this;
-
-            if(!isNew){
-                this.save(function(err){
-                    this.last_accessed_at = new Date();
-                    if(err)sails.log.err(err);
-                });
-            }
-
-            setTimeout(function(){
-                ClanCache.findOne(self.id, function(err, cache){
-                    if(cache){
-                        var age = (new Date()).getTime() - cache.last_accessed_at.getTime();
-                        if(age >= ClanCache.maxAge){
-                            cache.destroy(function() {
-                                sails.log.info('Remove clan from cache', cache.id, cache.tag);
-                            });
-                        }
-                    }
-                });
-            },ClanCache.maxAge);
         }
     },
 
@@ -58,15 +33,14 @@ module.exports = {
                     sails.log.info('Save clan to cache', clan.id, clan.tag);
                     var data = clan.getData();
                     data.last_accessed_at = new Date();
-                    self.create(data, function(err, cache) {
+                    self.create(data, function(err) {
                         if(err)sails.log.err(err);
-                        cache.setRemoveTimer(true);
                     });
                     return callback(null, clan, false);
                 });
             }else {
                 sails.log.info('Return clan from cache', cache.id, cache.tag);
-                cache.setRemoveTimer();
+                cache.last_accessed_at = new Date();
                 return callback(null, cache, true);
             }
         })
