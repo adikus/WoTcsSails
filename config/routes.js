@@ -36,6 +36,11 @@ module.exports.routes = {
     view: 'home/index'
   },
 
+  'get /clans/subscribe': {
+      controller    : 'clan',
+      action        : 'subscribe'
+  },
+
   'get /clans/:id?': {
       controller    : 'clan',
       action        : 'find'

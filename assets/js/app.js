@@ -31,6 +31,9 @@
 
     });
 
+    socket.get('/clans/subscribe', function(response) {
+        log(response);
+    });
 
     ///////////////////////////////////////////////////////////
     // Here's where you'll want to add any custom logic for

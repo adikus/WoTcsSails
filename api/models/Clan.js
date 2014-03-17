@@ -83,6 +83,12 @@ module.exports = {
         ClanCache.update(values.id, values, function(err, cache) {
             if(cache.length > 0)sails.log.info('Cache updated', cache[0].id, cache[0].tag);
         });
+
+        Clan.publishCreate({
+            id: values.id,
+            tag: values.tag
+        });
+
         next();
     }
 
