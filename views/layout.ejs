@@ -1,25 +1,50 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%- title %></title>
+<head>
+  <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+  <!--STYLES-->
+  <link rel="stylesheet" href="/1395099618456/styles/bootstrap.css">
+  <link rel="stylesheet" href="/1395099618456/styles/application.css">
+  <!--STYLES END-->
+  <script src="/js/jquery-2.1.0.js"></script>
+  <!--SCRIPTS-->
+  <script src="/1395099618456/js/socket.io.js"></script>
+  <script src="/1395099618456/js/sails.io.js"></script>
+  <script src="/1395099618456/js/app.js"></script>
+  <script src="/1395099618456/js/bootstrap/1-tooltip.js"></script>
+  <script src="/1395099618456/js/bootstrap/affix.js"></script>
+  <script src="/1395099618456/js/bootstrap/alert.js"></script>
+  <script src="/1395099618456/js/bootstrap/button.js"></script>
+  <script src="/1395099618456/js/bootstrap/carousel.js"></script>
+  <script src="/1395099618456/js/bootstrap/collapse.js"></script>
+  <script src="/1395099618456/js/bootstrap/dropdown.js"></script>
+  <script src="/1395099618456/js/bootstrap/modal.js"></script>
+  <script src="/1395099618456/js/bootstrap/popover.js"></script>
+  <script src="/1395099618456/js/bootstrap/scrollspy.js"></script>
+  <script src="/1395099618456/js/bootstrap/tab.js"></script>
+  <script src="/1395099618456/js/bootstrap/transition.js"></script>
+  <!--SCRIPTS END-->
 
-    <!-- Viewport mobile tag for sensible mobile support -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+</head>
+<body>
+<div id="wrap">
+  <script>
+      cfg = <%- JSON.stringify(sails.config.view) || {} %>;
+  </script>
+  <%- partial('nav') %>
 
-
-    <!--STYLES-->
-    <link rel="stylesheet" href="/1395094548033/styles/production.min.css">
-    <!--STYLES END-->
-    <!--SCRIPTS-->
-    <script src="/1395094548033/js/production.min.js"></script>
-    <!--SCRIPTS END-->
-
-  </head>
-
-  <body>
-
-    <!-- Include the view file for the current controller/route -->
+  <div class="container">
     <%- body %>
+  </div>
 
-    </body>
+  <div id="push"></div>
+</div>
+
+<div id="footer">
+  WoT clan statistics by adikus | 2013
+</div>
+
+</body>
 </html>

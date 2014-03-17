@@ -1,0 +1,32 @@
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <div class="nav-left-filler"></div>
+      <a href='/' class='navbar-brand'><%- img_tag('/images/logo-nav.png', {alt: 'Main logo'}) %></a>
+    </div>
+
+    <div class="navbar-menu">
+
+      <ul class="nav navbar-nav">
+        <% nav_item = /*sails.config.view.nav_item || */'clans' %>
+        <li<%= nav_item == 'clans' ? ' class="active"' : '' %>><a href="/clans">Clans</a></li>
+        <li<%= nav_item == 'stats' ? ' class="active"' : '' %>><a href="#">Statistics</a></li>
+        <li<%= nav_item == 'blog' ? ' class="active"' : '' %>><a href="#">Blog</a></li>
+        <li<%= nav_item == 'faq' ? ' class="active"' : '' %>><a href="#">FAQ & Contact</a></li>
+      </ul>
+
+      <div class="nav-search">
+        <form class="navbar-form navbar-left" role="search" action="/search" method="get" id="nav_search_from">
+          <%- partial('shared/region_dropdown', {class_name: 'navbar-left'}) %>
+          <div class="form-group">
+            <%- input_field_tag('search', '', {placeholder: 'Search', class: 'form-control input-sm', id: 'nav_search'}) %>
+          </div>
+          <%- hidden_field_tag('region', sails.config.view.region, {id: 'nav_region'}) %>
+          <button class="btn">
+              <i class="glyphicon glyphicon-search icon-white"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</nav>
