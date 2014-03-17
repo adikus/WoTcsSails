@@ -28,6 +28,9 @@ module.exports = function (grunt) {
     grunt.loadTasks(depsPath + '/grunt-sails-linker/tasks');
     grunt.loadTasks(depsPath + '/grunt-contrib-less/tasks');
     grunt.loadTasks(depsPath + '/grunt-contrib-watch/tasks');
+    grunt.loadTasks(depsPath + '/grunt-contrib-concat/tasks');
+    grunt.loadTasks(depsPath + '/grunt-contrib-uglify/tasks');
+    grunt.loadTasks(depsPath + '/grunt-contrib-cssmin/tasks');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -68,6 +71,19 @@ module.exports = function (grunt) {
                     'views/**/*.ejs': jsFilesToInject
                 }
             },
+            prodJs: {
+                options: {
+                    startTag: '<!--SCRIPTS-->',
+                    endTag: '<!--SCRIPTS END-->',
+                    fileTmpl: '<script src="%s"></script>',
+                    appRoot: '.tmp/public'
+                },
+                files: {
+                    '.tmp/public/**/*.html': ['.tmp/public/'+timestamp+'/js/production.min.js'],
+                    'views/**/*.html': ['.tmp/public/'+timestamp+'/js/production.min.js'],
+                    'views/**/*.ejs': ['.tmp/public/'+timestamp+'/js/production.min.js']
+                }
+            },
             devCss: {
                 options: {
                     startTag: '<!--STYLES-->',
@@ -79,6 +95,19 @@ module.exports = function (grunt) {
                     '.tmp/public/**/*.html': cssFilesToInject,
                     'views/**/*.html': cssFilesToInject,
                     'views/**/*.ejs': cssFilesToInject
+                }
+            },
+            prodCss: {
+                options: {
+                    startTag: '<!--STYLES-->',
+                    endTag: '<!--STYLES END-->',
+                    fileTmpl: '<link rel="stylesheet" href="%s">',
+                    appRoot: '.tmp/public'
+                },
+                files: {
+                    '.tmp/public/**/*.html': ['.tmp/public/'+timestamp+'/styles/production.min.css'],
+                    'views/**/*.html': ['.tmp/public/'+timestamp+'/styles/production.min.css'],
+                    'views/**/*.ejs': ['.tmp/public/'+timestamp+'/styles/production.min.css']
                 }
             }
         },
@@ -113,6 +142,31 @@ module.exports = function (grunt) {
                 // When assets are changed:
                 tasks: ['compileAssets', 'linkAssets']
             }
+        },
+
+        concat: {
+            js: {
+                src: jsFilesToInject,
+                dest: '.tmp/public/concat/production.js'
+            },
+            css: {
+                src: cssFilesToInject,
+                dest: '.tmp/public/concat/production.css'
+            }
+        },
+
+        uglify: {
+            dist: {
+                src: ['.tmp/public/concat/production.js'],
+                dest: '.tmp/public/'+timestamp+'/js/production.min.js'
+            }
+        },
+
+        cssmin: {
+            dist: {
+                src: ['.tmp/public/concat/production.css'],
+                dest: '.tmp/public/'+timestamp+'/styles/production.min.css'
+            }
         }
     });
 
@@ -129,12 +183,35 @@ module.exports = function (grunt) {
         'clean:dev',
         'copy:dev',
         'less',
-        'clean:less',
+        'clean:less'
     ]);
 
     grunt.registerTask('linkAssets', [
         'sails-linker:devJs',
         'sails-linker:devCss'
+    ]);
+
+    grunt.registerTask('prod',  function () {
+        grunt.option('force', true);
+        grunt.task.run([
+            'compileAssetsProd',
+            'linkAssetsProd'
+        ]);
+    });
+
+    grunt.registerTask('compileAssetsProd', [
+        'clean:dev',
+        'copy:dev',
+        'less',
+        'clean:less',
+        'concat',
+        'uglify',
+        'cssmin'
+    ]);
+
+    grunt.registerTask('linkAssetsProd', [
+        'sails-linker:prodJs',
+        'sails-linker:prodCss'
     ]);
 
 };
