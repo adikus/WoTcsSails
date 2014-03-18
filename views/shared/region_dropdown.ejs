@@ -2,13 +2,13 @@
 current_region = sails.config.view.region
 current_region_translated = RegionService.TranslatedRegion[current_region]
 %>
-<span class="js-region dropdown <%= locals.class_name || '' %>">
+<span class="js-region dropdown text-left <%= locals.class_name || '' %>">
     <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
       <span class="value"><%= current_region_translated %></span> <span class="caret"></span>
     </a>
     <ul class="dropdown-menu" role="menu">
       <% _.each(RegionService.supportedRegions, function(region){ %>
-        <li <%= current_region==region ? ' class="active"' : '' %>>
+        <li <%- current_region==region ? ' class="active"' : '' %>>
           <a href="?region=<%= region %>" data-region="<%= region %>">
             <%= RegionService.TranslatedRegion[region] %>
           </a>

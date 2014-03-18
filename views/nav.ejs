@@ -8,11 +8,9 @@
     <div class="navbar-menu">
 
       <ul class="nav navbar-nav">
-        <% nav_item = /*sails.config.view.nav_item || */'clans' %>
-        <li<%= nav_item == 'clans' ? ' class="active"' : '' %>><a href="/clans">Clans</a></li>
-        <li<%= nav_item == 'stats' ? ' class="active"' : '' %>><a href="#">Statistics</a></li>
-        <li<%= nav_item == 'blog' ? ' class="active"' : '' %>><a href="#">Blog</a></li>
-        <li<%= nav_item == 'faq' ? ' class="active"' : '' %>><a href="#">FAQ & Contact</a></li>
+        <% nav_item = locals.nav_item || '' %>
+        <li<%- nav_item == 'clans' ? ' class="active"' : '' %>><a href="/clans">Clans</a></li>
+        <li<%- nav_item == 'api' ? ' class="active"' : '' %>><a href="/api">API</a></li>
       </ul>
 
       <div class="nav-search">
