@@ -1,0 +1,32 @@
+<h1 class="text-center">Top clans</h1>
+
+<% i = skip+1 %>
+<% pagination = new Pagination(skip, count, limit, link_to) %>
+<div class="text-center">
+    <%- pagination.render('/clans?') %>
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Emblem</th>
+        <th>Tag</th>
+        <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% _.each(clans, function(clan){ %>
+    <tr>
+        <td><%= i++ %></td>
+        <td><%- img_tag(RegionService.emblemUrl(clan.id, '32x32')) %></td>
+        <td><%= clan.tag %></td>
+        <td><%= clan.name %></td>
+    </tr>
+    <% }); %>
+    </tbody>
+</table>
+
+<div class="text-center">
+    <%- pagination.render('/clans?') %>
+</div>

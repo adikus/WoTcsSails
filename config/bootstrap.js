@@ -9,10 +9,12 @@
  */
 
 module.exports.bootstrap = function (cb) {
-    sails.config.view = {
-        region: 1
-    };
     require('express-helpers')(sails.express.app);
+
+    sails.express.app.locals({
+        Pagination: require('../api/wotcs/Pagination')
+    });
+
     sails.clanQueue = new (require('../api/wotcs/ClanQueue.js'))();
     cb();
 };

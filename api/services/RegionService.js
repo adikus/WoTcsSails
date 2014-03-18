@@ -28,5 +28,35 @@ module.exports = {
         if(id > 1000000000){return this.NA;}
         if(id > 500000000){return this.EU;}
         return this.RU;
+    },
+
+    getHost: function(region) {
+        switch(region){
+            case 0:
+                return 'worldoftanks.ru';
+                break;
+            case 1:
+                return 'worldoftanks.eu';
+                break;
+            case 2:
+                return 'worldoftanks.com';
+                break;
+            case 3:
+                return 'worldoftanks.asia';
+                break;
+            case 4:
+                return 'portal-wot.go.vn';
+                break;
+            case 5:
+                return 'worldoftanks.kr';
+                break;
+        }
+        return '';
+    },
+
+    emblemUrl: function(id, size) {
+        var region = this.getRegion(id);
+        size = size || '64x64';
+        return "http://clans."+this.getHost(region)+"/media/clans/emblems/cl_"+id.toString().slice(-3)+"/"+id+"/emblem_"+size+".png"
     }
 };

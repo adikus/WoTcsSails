@@ -55,12 +55,18 @@ module.exports = {
 
     inRegionWhere: function(region) {
         var bounds = RegionService.bounds[region];
-        //return {or: [{and: {id: {'>': bounds.min}}}], id: {'<': bounds.max}};
         return {and: [{id: {'>': bounds.min}}, {id: {'<': bounds.max}}]};
     },
 
-    countInRegion: function(region, callback) {
-        this.count().where(this.inRegionWhere(region)).exec(callback);
+    inRegionFind: function(region) {
+        return this.find().where(this.inRegionWhere(region));
+    },
+
+    countInRegion: function(region, where, callback) {
+        var query = this.count().where(this.inRegionWhere(region));
+        if(where)query.where(where);
+        if(!callback)callback = where;
+        query.exec(callback);
     },
 
     new: function(attributes) {

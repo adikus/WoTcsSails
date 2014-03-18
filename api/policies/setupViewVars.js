@@ -1,16 +1,8 @@
-/**
- * checkCache
- *
- * @module      :: Policy
- * @description :: Checks and removes expired cache
- *
- */
+var _ = require('underscore');
+
 module.exports = function(req, res, next) {
 
-    /*sails.config.view = {
-        region: 1
-    };*/
-
+    res.vars = _(res.vars).extend(req.target);
     next();
 
 };

@@ -25,6 +25,15 @@ module.exports = {
                 return res.json({status: 'ok', clan: clan.getData(), fromCache: fromCache});
             });
         }
+        if(!req.params.id){
+            var region = res.vars.region;
+            var skip = req.query.skip || 0;
+            return Clan.inRegionFind(region).where({status: 1}).sort('tag').limit(30).skip(skip).exec(function(err, clans) {
+                Clan.countInRegion(region, {status: 1}, function(err, count) {
+                    res.view('clan/index',{clans: clans, count: count, skip: skip, limit: 30});
+                });
+            });
+        }
         var id = parseInt(req.params.id);
         if(isNaN(id) || id <= 0){
             return res.send("Bad clan id.", 500);
