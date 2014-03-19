@@ -205,6 +205,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('compileAssets', [
         'clean:dev',
+        'file-creator',
         'copy:dev',
         'less',
         'clean:less',
@@ -228,6 +229,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('compileAssetsProd', [
         'clean:dev',
+        'file-creator',
         'copy:dev',
         'less',
         'clean:less',
@@ -239,7 +241,6 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('linkAssetsProd', [
-        'file-creator',
         'sails-linker:prodJs',
         'sails-linker:prodCss'
     ]);
