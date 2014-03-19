@@ -39,7 +39,10 @@ module.exports = {
 
   port: process.env.PORT || 3000,
 
-
+  paths: {
+      tmp: __dirname + '/../tmp',
+      'public': __dirname + '/../tmp/public'
+  },
 
   // The runtime "environment" of your Sails app is either 'development' or 'production'.
   //
