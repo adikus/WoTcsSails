@@ -1,25 +1,29 @@
 module.exports = function (grunt) {
 
-    var timestamp = (new Date()).getTime();
-
     var jsFilesToInject = [
 
-        'socket.io.js',
-        'sails.io.js',
-        'app.js',
-        '**/*.js'
+        'socket.io',
+        'sails.io',
+        'app',
+        '**/'
     ];
+    var jsFilesToHash = jsFilesToInject.map(function (path) {
+        return '.tmp/public/comp-temp/js/'+path+'*.js';;
+    });
     jsFilesToInject = jsFilesToInject.map(function (path) {
-        return '.tmp/public/'+timestamp+'/js/'+path;
+        return '.tmp/public/comp/js/'+path+'*.js';
     });
 
     var cssFilesToInject = [
 
-        'bootstrap.css',
-        '**/*.css'
+        'bootstrap',
+        '**/'
     ];
+    var cssFilesToHash = cssFilesToInject.map(function (path) {
+        return '.tmp/public/comp-temp/styles/'+path+'*.css';
+    });
     cssFilesToInject = cssFilesToInject.map(function (path) {
-        return '.tmp/public/'+timestamp+'/styles/'+path;
+        return '.tmp/public/comp/styles/'+path+'*.css';
     });
 
     var depsPath = grunt.option('gdsrc') || 'node_modules/sails/node_modules';
@@ -31,13 +35,16 @@ module.exports = function (grunt) {
     grunt.loadTasks(depsPath + '/grunt-contrib-concat/tasks');
     grunt.loadTasks(depsPath + '/grunt-contrib-uglify/tasks');
     grunt.loadTasks(depsPath + '/grunt-contrib-cssmin/tasks');
+    grunt.loadNpmTasks('grunt-md5');
+    grunt.loadNpmTasks('grunt-file-creator');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
         clean: {
             dev: ['.tmp/public/**'],
-            less: ['.tmp/public/'+timestamp+'/styles/bootstrap/**', '.tmp/public/'+timestamp+'/styles/*.less']
+            less: ['.tmp/public/comp/styles/bootstrap/**', '.tmp/public/comp/styles/*.less'],
+            temp: ['.tmp/public/comp-temp/**']
         },
 
         copy: {
@@ -51,7 +58,7 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: './assets/linker',
                     src: ['**/*'],
-                    dest: '.tmp/public/'+timestamp
+                    dest: '.tmp/public/comp-temp'
                 }]
             }
         },
@@ -66,9 +73,7 @@ module.exports = function (grunt) {
                     appRoot: '.tmp/public'
                 },
                 files: {
-                    '.tmp/public/**/*.html': jsFilesToInject,
-                    'views/**/*.html': jsFilesToInject,
-                    'views/**/*.ejs': jsFilesToInject
+                    '.tmp/assets.ejs': jsFilesToInject
                 }
             },
             prodJs: {
@@ -79,9 +84,7 @@ module.exports = function (grunt) {
                     appRoot: '.tmp/public'
                 },
                 files: {
-                    '.tmp/public/**/*.html': ['.tmp/public/'+timestamp+'/js/production.min.js'],
-                    'views/**/*.html': ['.tmp/public/'+timestamp+'/js/production.min.js'],
-                    'views/**/*.ejs': ['.tmp/public/'+timestamp+'/js/production.min.js']
+                    '.tmp/assets.ejs': ['.tmp/public/comp/js/production.min*.js']
                 }
             },
             devCss: {
@@ -92,9 +95,7 @@ module.exports = function (grunt) {
                     appRoot: '.tmp/public'
                 },
                 files: {
-                    '.tmp/public/**/*.html': cssFilesToInject,
-                    'views/**/*.html': cssFilesToInject,
-                    'views/**/*.ejs': cssFilesToInject
+                    '.tmp/assets.ejs': cssFilesToInject
                 }
             },
             prodCss: {
@@ -105,9 +106,7 @@ module.exports = function (grunt) {
                     appRoot: '.tmp/public'
                 },
                 files: {
-                    '.tmp/public/**/*.html': ['.tmp/public/'+timestamp+'/styles/production.min.css'],
-                    'views/**/*.html': ['.tmp/public/'+timestamp+'/styles/production.min.css'],
-                    'views/**/*.ejs': ['.tmp/public/'+timestamp+'/styles/production.min.css']
+                    '.tmp/assets.ejs': ['.tmp/public/comp/styles/production.min*.css']
                 }
             }
         },
@@ -117,16 +116,16 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '.tmp/public/'+timestamp+'/styles/bootstrap',
+                        cwd: '.tmp/public/comp-temp/styles/bootstrap',
                         src: ['bootstrap.less'],
-                        dest: '.tmp/public/'+timestamp+'/styles',
+                        dest: '.tmp/public/comp-temp/styles',
                         ext: '.css'
                     },
                     {
                         expand: true,
-                        cwd: '.tmp/public/'+timestamp+'/styles',
+                        cwd: '.tmp/public/comp-temp/styles',
                         src: ['*.less'],
-                        dest: '.tmp/public/'+timestamp+'/styles',
+                        dest: '.tmp/public/comp-temp/styles',
                         ext: '.css'
                     }
                 ]
@@ -146,28 +145,53 @@ module.exports = function (grunt) {
 
         concat: {
             js: {
-                src: jsFilesToInject,
-                dest: '.tmp/public/concat/production.js'
+                src: jsFilesToHash,
+                dest: '.tmp/public/comp-temp/js/production.js'
             },
             css: {
-                src: cssFilesToInject,
-                dest: '.tmp/public/concat/production.css'
+                src: cssFilesToHash,
+                dest: '.tmp/public/comp-temp/styles/production.css'
             }
         },
 
         uglify: {
             dist: {
-                src: ['.tmp/public/concat/production.js'],
-                dest: '.tmp/public/'+timestamp+'/js/production.min.js'
+                src: ['.tmp/public/comp-temp/js/production.js'],
+                dest: '.tmp/public/comp-temp/js/production.min.js'
             }
         },
 
         cssmin: {
             dist: {
-                src: ['.tmp/public/concat/production.css'],
-                dest: '.tmp/public/'+timestamp+'/styles/production.min.css'
+                src: ['.tmp/public/comp-temp/styles/production.css'],
+                dest: '.tmp/public/comp-temp/styles/production.min.css'
+            }
+        },
+
+        md5: {
+            dev: {
+                files: {
+                    '.tmp/public/comp/styles/': cssFilesToHash,
+                    '.tmp/public/comp/js/': jsFilesToHash
+                }
+            },
+            prod: {
+                files: {
+                    '.tmp/public/comp/styles/': ['.tmp/public/comp-temp/styles/production.min.css'],
+                    '.tmp/public/comp/js/': ['.tmp/public/comp-temp/js/production.min.js']
+                }
+            }
+        },
+
+        'file-creator': {
+            files: {
+                ".tmp/assets.ejs": function(fs, fd, done) {
+                    fs.writeSync(fd, '<!--STYLES--><!--STYLES END--><!--SCRIPTS--><!--SCRIPTS END-->');
+                    done();
+                }
             }
         }
+
     });
 
     grunt.registerTask('default',  function () {
@@ -183,10 +207,13 @@ module.exports = function (grunt) {
         'clean:dev',
         'copy:dev',
         'less',
-        'clean:less'
+        'clean:less',
+        'md5:dev',
+        'clean:temp'
     ]);
 
     grunt.registerTask('linkAssets', [
+        'file-creator',
         'sails-linker:devJs',
         'sails-linker:devCss'
     ]);
@@ -206,10 +233,13 @@ module.exports = function (grunt) {
         'clean:less',
         'concat',
         'uglify',
-        'cssmin'
+        'cssmin',
+        'md5:prod',
+        'clean:temp'
     ]);
 
     grunt.registerTask('linkAssetsProd', [
+        'file-creator',
         'sails-linker:prodJs',
         'sails-linker:prodCss'
     ]);
