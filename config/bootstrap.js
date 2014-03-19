@@ -16,5 +16,6 @@ module.exports.bootstrap = function (cb) {
     });
 
     sails.clanQueue = new (require('../api/wotcs/ClanQueue.js'))();
-    cb();
+
+    sails.config.environment == 'production' ? setTimeout(cb, 5000) : cb();
 };
