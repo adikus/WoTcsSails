@@ -39,7 +39,7 @@ module.exports = {
                     return callback(null, clan, false);
                 });
             }else {
-                sails.log.info('Return clan from cache', cache.id, cache.tag);
+                sails.log.verbose('Return clan from cache', cache.id, cache.tag);
                 cache.last_accessed_at = new Date();
                 cache.save(function(){});
                 return callback(null, cache, true);
