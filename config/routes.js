@@ -30,21 +30,22 @@ module.exports.routes = {
 
   // By default, your root route (aka home page) points to a view
   // located at `views/home/index.ejs`
-  // 
+  //
   // (This would also work if you had a file at: `/views/home.ejs`)
   '/': {
     view: 'home/index'
   },
-
-  'get /clans/:id?': {
-      controller    : 'clan',
-      action        : 'find'
+  '/about': {
+      view: 'home/about'
   },
 
-  'get /clans/:region/:tag': {
-      controller    : 'clan',
-      action        : 'find'
-  }
+  'get /api': 'ApiController',
+
+  'get /search': 'SearchController',
+
+  'get /clans/:id?': 'ClanController.find',
+
+  'get /clans/:region/:tag': 'ClanController.find'
 
   /*
   // But what if you want your home page to display

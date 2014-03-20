@@ -1,0 +1,29 @@
+@import "bootstrap/variables.less";
+@import "bootstrap/mixins.less";
+
+.ad-container-300x250 {
+  position: relative;
+  .ad-column {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    .ad {
+      height: 250px;
+      border: 1px solid @btn-default-border;
+      .box-sizing(border-box);
+    }
+  }
+  .ad-rest {
+    padding: 0 330px 0 15px;
+  }
+}
+
+.ad-300-250 {
+  float: right;
+  height: 270px;
+  width: 300px;
+  border: 1px solid @btn-default-border;
+  margin-top: -20px;
+  .box-sizing(border-box);
+}

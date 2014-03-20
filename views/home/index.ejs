@@ -1,5 +1,15 @@
-<div class="row">
-  <div class="ad-300-250"></div>
+<h1 class="text-center">A simple tool, which will show you battle potential of your enemy</h1>
+
+<form class="form-inline main-search-form text-center" action="/search" method="get">
+    <%- hidden_field_tag('region', sails.config.view.region) %>
+    <%- partial('../shared/region_dropdown', {class_name: 'text-left'}) %>
+    <div class="form-group wide">
+        <%- input_field_tag('search', '', {placeholder: 'Search for a clan or player', class: 'form-control'}) %>
+    </div>
+    <button class="btn">Search</button>
+</form>
+
+<div class="row ad-container-300x250">
   <div class="ad-rest">
     <div class="main-logo">
       <div class='yellow-line-wrapper'>
@@ -9,20 +19,24 @@
         <%- img_tag('images/logo-text.png', {class: 'pull-left'}) %>
         <br>
         WoTcs.com was created when Clan Wars were first introduced. It allows you to check your opponent's strength
-        without having to browse each clan's members' profile. You can read more <%- link_to('here', '/about') %>.
+        without having to browse each clan's members' profile. You can read more about this project <%- link_to('here', '/about') %>.
       </p>
     </div>
-  </div>
 
+    <h2 class="text-center">News</h2>
+    
+    <div class="news-container">
+        <div class="news-element">
+            <h3>Testing version online <small>20/03/2014</small></h3>
+            <p>
+                So I decided to share with you what I am working on. Right now there isn't much to see, but
+                new updates should follow soon. All comments and feedback are highly appreciated.
+            </p>
+        </div>
+    </div>
+  </div>
+  <div class="ad-column">
+    <div class="ad"></div>
+  </div>
 </div>
 
-<h1 class="text-center">A simple tool, which will show you battle potential of your enemy</h1>
-
-<form class="form-inline main-search-form text-center" action="/search" method="get">
-	<%- hidden_field_tag('region', sails.config.view.region) %>
-  <%- partial('../shared/region_dropdown', {class_name: 'text-left'}) %>
-  <div class="form-group wide">
-    <%- input_field_tag('search', '', {placeholder: 'Search', class: 'form-control'}) %>
-  </div>
-  <button class="btn">Search</button>
-</form>
