@@ -9,7 +9,7 @@
 module.exports = {
 
     adapter: 'memory',
-    maxAge: 5000,
+    maxAge: 60000,
 
     autoCreatedAt: false,
     autoUpdatedAt: false,
@@ -41,6 +41,7 @@ module.exports = {
             }else {
                 sails.log.info('Return clan from cache', cache.id, cache.tag);
                 cache.last_accessed_at = new Date();
+                cache.save(function(){});
                 return callback(null, cache, true);
             }
         })
