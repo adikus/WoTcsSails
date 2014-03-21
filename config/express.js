@@ -4,8 +4,8 @@ module.exports.express = {
     customMiddleware: function (app) {
 
         app.use(function(req, res, next) {
-            if(req.url.indexOf('styles') > -1 || req.url.indexOf('js') > -1
-                || req.url.indexOf('images') > -1 || req.url.indexOf('fonts') > -1)return next();
+            if(req.url.indexOf('/styles/') > -1 || req.url.indexOf('/js/') > -1
+                || req.url.indexOf('/images/') > -1 || req.url.indexOf('/fonts/') > -1)return next();
 
             res.vars = {};
             var region = (req.query.region || req.cookies.region) || 1;
