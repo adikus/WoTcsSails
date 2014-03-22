@@ -36,7 +36,7 @@ module.exports[400] = function badRequest(validationErrors, redirectTo, req, res
 
   // Optional validationErrors object
   if (validationErrors) {
-    result.validationErrors = validationErrors;
+    result.errors = validationErrors;
   }
 
   // For requesters expecting JSON, everything works like you would expect-- a simple JSON response

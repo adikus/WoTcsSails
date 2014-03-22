@@ -20,8 +20,11 @@ module.exports = {
     find: function(req, res) {
         if(req.params.region && req.params.tag){
             return ClanCache.getByTag(req.params.region, req.params.tag, function(err, clan, fromCache) {
-                if (err) return res.send(err, 500);
-                if(!clan) return res.send("Clan not found.", 404);
+                if (err) return res.serverError(err);
+                if(!clan){
+                    res.notFoundMessage = "Clan not found.";
+                    return res.notFound();
+                }
                 return res.json({status: 'ok', clan: clan.getData(), fromCache: fromCache});
             });
         }
@@ -36,11 +39,14 @@ module.exports = {
         }
         var id = parseInt(req.params.id);
         if(isNaN(id) || id <= 0){
-            return res.send("Bad clan id.", 500);
+            return res.badRequest(["Bad clan id."]);
         }
         return ClanCache.get(id, function(err, clan, fromCache) {
-            if (err) return res.send(err, 500);
-            if(!clan) return res.send("Clan not found.", 404);
+            if (err) return res.serverError(err);
+            if(!clan){
+                res.notFoundMessage = "Clan not found.";
+                return res.notFound();
+            }
             return res.json({status: 'ok', clan: clan.getData(), fromCache: fromCache});
         });
     },

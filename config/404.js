@@ -21,12 +21,19 @@ module.exports[404] = function pageNotFound(req, res) {
     status: statusCode
   };
 
+  if(res.notFoundMessage){
+      result.errors = [res.notFoundMessage];
+  }
+
   // If the user-agent wants a JSON response, send json
   if (req.wantsJSON) {
     return res.json(result, result.status);
   }
 
   res.status(result.status);
+
+  res.locals.error = result.errors ? result.errors[0] : 'The page you are looking for does not exist.';
+  res.locals._layoutFile = 'layout';
   res.render(viewFilePath, function (err) {
     // If the view doesn't exist, or an error occured, send json
     if (err) { return res.json(result, result.status); }

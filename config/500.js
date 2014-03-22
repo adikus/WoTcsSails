@@ -12,7 +12,7 @@
  *      optional errors
  */
 
-module.exports[500] = function serverErrorOccurred(errors, req, res) {
+module.exports[500] = function serverErrorOccurred(errors, req, res, next) {
 
   /*
    * NOTE: This function is Sails middleware-- that means that not only do `req` and `res`
@@ -65,8 +65,9 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
   for (var key in result) {
     res.locals[key] = result[key];
   }
+  res.locals._layoutFile = 'layout';
   // And render view
-  res.render(viewFilePath, result, function (err) {
+  res.render(viewFilePath, function (err) {
     // If the view doesn't exist, or an error occured, just send JSON
     if (err) { return res.json(result, result.status); }
     
