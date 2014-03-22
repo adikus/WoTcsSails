@@ -18,7 +18,16 @@ module.exports = (function(skip, count, limit, link_to){
             render += '</li>';
 
             _(this.show).each(function(page){
-                render += '<li'+(page == pagination.current ? ' class="active"':(page == '...' ? ' class="disabled"':''))+'>';
+                var classes = ['hidden-xxs'];
+                if(page == pagination.current)classes.push('active');
+                if(page == '...'){
+                    classes.push('disabled');
+                    classes.push('hidden-xs');
+                }
+                if(Math.abs(page - pagination.current) > 2 && [1, pagination.pages].indexOf(page) < 0)classes.push('hidden-xs');
+                var classString = 'class="'+classes.join(' ')+'"';
+
+                render += '<li '+classString+'>';
                 render += link_to(page, page == '...' ? '#':'/clans?skip='+(page-1)*limit);
                 render += '</li>';
             });

@@ -51,8 +51,13 @@
   }
 }
 
+.hidden-xxs {
+  @media (max-width: @screen-xs-min) {
+    .responsive-invisibility();
+  }
+}
 .hidden-xs {
-  @media (max-width: @screen-xs-max) {
+  @media (min-width: @screen-xs-min) and (max-width: @screen-xs-max) {
     .responsive-invisibility();
   }
 }

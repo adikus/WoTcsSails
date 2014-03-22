@@ -26,6 +26,9 @@ html, body {
   margin-bottom: 50px;
   .form-group.wide {
     width: 70%;
+    @media(max-width: @screen-xs-min){
+      width:57%;
+    }
     input {
       width: 100%;
     }
@@ -53,8 +56,20 @@ html, body {
   .logo-text {
     img {
       margin: 0 30px 30px;
+      @media(min-width: (@screen-xs-min + 311px)) and (max-width: @screen-md-min){
+        margin-right: 100px;
+        margin-bottom: 15px;
+      }
     }
     font-size: 1.2em;
+    @media(max-width: @screen-xs-min){
+      img {
+        float: none !important;
+        margin-bottom: 15px;
+        margin-left: -15px;
+      }
+      padding-left: 15px;
+    }
   }
 }
 

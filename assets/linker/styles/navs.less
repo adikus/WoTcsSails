@@ -25,6 +25,9 @@ nav.navbar {
             width: 75%;
             margin: 0;
             display: inline-block;
+            input.form-control {
+              width: 100%;
+            }
           }
           .dropdown-toggle {
             display: inline-block;
@@ -41,8 +44,8 @@ nav.navbar {
     }
   }
   @media(max-width: @screen-xs-min){
-    overflow-x: hidden;
     .navbar-header {
+      overflow-x: hidden;
       position: relative;
       .navbar-toggle {
         position: absolute;
