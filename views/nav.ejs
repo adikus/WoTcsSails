@@ -3,28 +3,36 @@
     <div class="navbar-header">
       <div class="nav-left-filler"></div>
       <a href='/' class='navbar-brand'><%- img_tag('/images/logo-nav.png', {alt: 'Main logo'}) %></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
     </div>
 
     <div class="navbar-menu">
 
-      <ul class="nav navbar-nav">
-        <% nav_item = locals.nav_item || '' %>
-        <li<%- nav_item == 'clans' ? ' class="active"' : '' %>><a href="/clans">Clans</a></li>
-        <li<%- nav_item == 'api' ? ' class="active"' : '' %>><a href="/api">API</a></li>
-      </ul>
-
       <div class="nav-search">
         <form class="navbar-form navbar-left" role="search" action="/search" method="get" id="nav_search_from">
-          <%- partial('shared/region_dropdown', {class_name: 'navbar-left'}) %>
-          <div class="form-group">
-            <%- input_field_tag('search', '', {placeholder: 'Search', class: 'form-control input-sm', id: 'nav_search'}) %>
-          </div>
-          <%- hidden_field_tag('region', region, {id: 'nav_region'}) %>
-          <button class="btn">
-              <i class="glyphicon glyphicon-search icon-white"></i>
-          </button>
+            <%- partial('shared/region_dropdown', {class_name: 'navbar-left'}) %>
+            <div class="form-group">
+                <%- input_field_tag('search', '', {placeholder: 'Search', class: 'form-control input-sm', id: 'nav_search'}) %>
+            </div>
+            <%- hidden_field_tag('region', region, {id: 'nav_region'}) %>
+            <button class="btn">
+                <i class="glyphicon glyphicon-search icon-white"></i>
+            </button>
         </form>
       </div>
+
+      <div class="collapse navbar-collapse" id="main-nav-collapse">
+          <ul class="nav navbar-nav">
+            <% nav_item = locals.nav_item || '' %>
+            <li<%- nav_item == 'clans' ? ' class="active"' : '' %>><a href="/clans">Clans</a></li>
+            <li<%- nav_item == 'api' ? ' class="active"' : '' %>><a href="/api">API</a></li>
+          </ul>
+      </div>
+
     </div>
   </div>
 </nav>
