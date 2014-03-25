@@ -45,6 +45,13 @@
   }
 }
 
+.list-group-small .list-group-item  {
+  padding: 5px 8px;
+  > .badge {
+    font-weight: normal;
+  }
+}
+
 
 // Linked list items
 //
@@ -90,10 +97,10 @@ a.list-group-item {
 // Add modifier classes to change text and background color on individual items.
 // Organizationally, this must come after the `:hover` states.
 
-.list-group-item-variant(success; @state-success-bg; @state-success-text);
-.list-group-item-variant(info; @state-info-bg; @state-info-text);
-.list-group-item-variant(warning; @state-warning-bg; @state-warning-text);
-.list-group-item-variant(danger; @state-danger-bg; @state-danger-text);
+.list-group-item-variant(success; @state-success-bg; #fff);
+.list-group-item-variant(info; @state-info-bg; #fff);
+.list-group-item-variant(warning; @state-warning-bg; #fff);
+.list-group-item-variant(danger; @state-danger-bg; #fff);
 
 
 // Custom content options

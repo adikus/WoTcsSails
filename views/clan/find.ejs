@@ -1,0 +1,57 @@
+<div class="row ad-container-300x250">
+    <div class="ad-rest" id="clan_header">
+        <h1><%- img_tag(RegionService.emblemUrl(clan.id)) %> [<%= clan.tag %>]</h1>
+        <h2><%= clan.name %></h2>
+        <em><%= clan.motto %></em>
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">Stats</a></li>
+            <li><a href="#">Members</a></li>
+            <li><a href="#">Tanks</a></li>
+            <li><a href="#">Changes</a></li>
+        </ul>
+
+    </div>
+    <div class="ad-column">
+        <div class="ad"></div>
+    </div>
+</div>
+<div class="row ad-container-300x250">
+
+    <div class="ad-rest" id="clan_home">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>Stats
+                    <small><%- link_to('more', '#') %></small>
+                </h3>
+                <%- partial('home/stats') %>
+            </div>
+            <div class="col-sm-6">
+                <h3>Members
+                    <small><%- link_to('more', '#') %></small>
+                </h3>
+                <%- partial('home/members') %>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>Tanks
+                    <small><%- link_to('more', '#') %></small>
+                </h3>
+                <%- partial('home/tanks') %>
+            </div>
+            <div class="col-sm-6">
+                <h3>Changes
+                    <small><%- link_to('more', '#') %></small>
+                </h3>
+                <%- partial('home/changes') %>
+            </div>
+        </div>
+    </div>
+    <div class="ad-column">
+        <h3>Description</h3>
+        <%- clan.description %>
+    </div>
+</div>

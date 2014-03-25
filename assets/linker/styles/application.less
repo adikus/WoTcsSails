@@ -79,3 +79,35 @@ html, body {
     margin-bottom: 25px;
   }
 }
+
+#clan_header {
+  height: 230px;
+  position: relative;;
+  ul {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+}
+
+#clan_home {
+  min-height: 400px;
+  .progress {
+    margin-bottom: 5px;
+  }
+  .stats-switch {
+    margin-bottom: 15px;
+    a {
+      &.active {
+        text-decoration: underline;
+        text-decoration-style: dashed;
+        -moz-text-decoration-style: dashed;
+        -webkit-text-decoration-style: dashed;
+      }
+      text-decoration-style: dashed;
+      -moz-text-decoration-style: dashed;
+      -webkit-text-decoration-style: dashed;
+    }
+  }
+}

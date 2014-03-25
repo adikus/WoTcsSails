@@ -18,6 +18,15 @@
 module.exports = {
     
     find: function(req, res) {
+
+        function renderClan(clan, fromCache) {
+            if (req.wantsJSON) {
+                res.json({status: 'ok', clan: clan.getData(), fromCache: fromCache});
+            }else{
+                res.view({clan: clan});
+            }
+        }
+
         if(req.params.region && req.params.tag){
             return ClanCache.getByTag(req.params.region, req.params.tag, function(err, clan, fromCache) {
                 if (err) return res.serverError(err);
@@ -25,7 +34,7 @@ module.exports = {
                     res.notFoundMessage = "Clan not found.";
                     return res.notFound();
                 }
-                return res.json({status: 'ok', clan: clan.getData(), fromCache: fromCache});
+                return renderClan(clan, fromCache);
             });
         }
         if(!req.params.id){
@@ -47,7 +56,7 @@ module.exports = {
                 res.notFoundMessage = "Clan not found.";
                 return res.notFound();
             }
-            return res.json({status: 'ok', clan: clan.getData(), fromCache: fromCache});
+            return renderClan(clan, fromCache);
         });
     },
 
