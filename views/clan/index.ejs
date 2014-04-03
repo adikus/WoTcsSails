@@ -6,7 +6,7 @@
     <%- pagination.render('/clans?') %>
 </div>
 
-<table class="table table-striped">
+<table class="table table-striped table-hover">
     <thead>
     <tr>
         <th>#</th>
@@ -17,8 +17,8 @@
     </thead>
     <tbody>
     <% _.each(clans, function(clan){ %>
-    <tr>
-        <td><%= i++ %></td>
+    <tr class="clickable">
+        <td><%- link_to(i++, '/clans/'+clan.id) %></td>
         <td><%- img_tag(RegionService.emblemUrl(clan.id, '32x32')) %></td>
         <td><%= clan.tag %></td>
         <td><%= clan.name %></td>

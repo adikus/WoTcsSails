@@ -56,17 +56,14 @@ html, body {
   .logo-text {
     img {
       margin: 0 30px 30px;
-      @media(min-width: (@screen-xs-min + 311px)) and (max-width: @screen-md-min){
-        margin-right: 100px;
-        margin-bottom: 15px;
-      }
+      @media(min-width: 600px) and (max-width: 680px){ margin-bottom: 60px; }
+      @media(max-width: 600px){ margin-bottom: 15px; }
     }
     font-size: 1.2em;
     @media(max-width: @screen-xs-min){
       img {
         float: none !important;
-        margin-bottom: 15px;
-        margin-left: -15px;
+        margin-left: 15px;
       }
       padding-left: 15px;
     }
@@ -81,9 +78,17 @@ html, body {
 }
 
 #clan_header {
-  height: 230px;
+  h1 { font-size: 50px; }
+  h2 {
+    font-size: 26px;
+    @media(max-width: @screen-md-max){ font-size: 24px; }
+    @media(max-width: @screen-sm-max){ font-size: 22px; }
+  }
+  @media(min-width: @screen-md-min){ height: 230px; }
+  @media(max-width: @screen-sm-max){ margin-bottom: 30px; }
   position: relative;;
   ul {
+    padding: 0 15px;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -110,4 +115,19 @@ html, body {
       -webkit-text-decoration-style: dashed;
     }
   }
+}
+
+#clan_description_small {
+  margin-bottom: 30px;
+}
+
+.col-padding {
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
+.col-padding-left {
+  padding-left: 15px !important;
+}
+.col-padding-right {
+  padding-right: 15px !important;
 }

@@ -45,15 +45,20 @@
 //
 // Common styles for small and large grid columns
 
+// Extra tiny grid
+
 .make-grid-columns();
 
+.make-grid(xxs);
 
 // Extra small grid
 //
 // Columns, offsets, pushes, and pulls for extra small devices like
 // smartphones.
 
-.make-grid(xs);
+@media (min-width: @screen-xs-min) {
+  .make-grid(xs);
+}
 
 
 // Small grid

@@ -1,7 +1,7 @@
 @import "bootstrap/variables.less";
 @import "bootstrap/mixins.less";
 
-@media(min-width: (@screen-xs-min + 311px)){
+@media(min-width: (@screen-md-min)){
   .ad-container-300x250 {
     position: relative;
     .ad-column {
@@ -16,20 +16,30 @@
       }
     }
     .ad-rest {
-      padding: 0 330px 0 15px;
+      padding: 0 330px 0 0;
     }
   }
 }
 
-@media(max-width: (@screen-xs-min + 310px)){
+@media(max-width: (@screen-sm-max)){
   .ad-container-300x250 {
     .ad-column {
-      margin: 0 auto;
-      width: 300px;
+      width: 100%;
       .ad {
+        width: 300px;
         height: 250px;
         border: 1px solid @btn-default-border;
+        margin: 0 auto;
         .box-sizing(border-box);
+        @media(min-width: (@screen-sm-min)){
+          &.float {
+            float: right;
+            margin: 0 0 10px 10px;
+          }
+        }
+        @media(max-width: (@screen-xs-max)){
+          margin-bottom: 30px;
+        }
       }
     }
     .ad-rest {

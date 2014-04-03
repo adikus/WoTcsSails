@@ -30,8 +30,13 @@
   .responsive-invisibility();
 }
 
+.visible-xxs {
+  @media (max-width: @screen-xs-min - 1px) {
+    .responsive-visibility();
+  }
+}
 .visible-xs {
-  @media (max-width: @screen-xs-max) {
+  @media (min-width: @screen-xs-min) and (max-width: @screen-xs-max) {
     .responsive-visibility();
   }
 }
