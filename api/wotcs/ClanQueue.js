@@ -4,6 +4,8 @@ module.exports = (function(){
 
     var queue = {
 
+        roomID: 1,
+
         config: {
             clansPerRequest: 30,
             queueThreshold : 50
@@ -137,6 +139,10 @@ module.exports = (function(){
             },60000);
 
             Clan.find().where(Clan.inRegionWhere(task.region)).skip(task.skip).limit(task.limit).sort({id: 1}).exec(function(err, clans) {
+                if(clans.length == 0){
+                    delete this.pending[ID];
+                    return;
+                }
                 task.clans = clans;
                 task.count = clans.length;
 
@@ -173,6 +179,11 @@ module.exports = (function(){
                 this.stats.clansDone += count;
             }
             this.calcSpeed(count);
+            ApiRoom.publishUpdate( this.roomID, {
+                stats: this.stats,
+                action: 'done',
+                count: count
+            });
         },
 
         calcSpeed: function(count) {
@@ -188,7 +199,7 @@ module.exports = (function(){
             if(this.recent.length > 1){
                 var sum = _.chain(this.recent).pluck('count').reduce(function(memo, num){ return memo + num; }, 0).value();
                 var duration = _(this.recent).last().time.getTime() - _(this.recent).first().time.getTime();
-                this.speed = Math.round(sum/duration*1000*100)/100;
+                this.stats.speed = Math.round(sum/duration*1000*100)/100;
             }
         },
 
@@ -212,6 +223,11 @@ module.exports = (function(){
             delete this.pending[ID];
             this.regionStats[region].errors.push(new Date());
             this.calcSpeed();
+            ApiRoom.publishUpdate( this.roomID, {
+                stats: this.stats,
+                action: 'failed',
+                count: count
+            });
         },
 
         splitTask: function(task) {
@@ -236,6 +252,10 @@ module.exports = (function(){
     setInterval(function(){
         queue.step();
     },50);
+
+    ApiRoom.create({id: this.roomID, name: 'clans'}, function(err, room){
+        queue.room = room;
+    });
 
     return queue;
 });

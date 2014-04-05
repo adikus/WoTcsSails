@@ -41,6 +41,8 @@ module.exports.routes = {
 
   'get /api': 'ApiController',
 
+  'get /api/:id/subscribe': 'ApiController.subscribe',
+
   'get /search': 'SearchController',
 
   'get /clans/:id?': 'ClanController.find',

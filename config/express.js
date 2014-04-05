@@ -17,6 +17,7 @@ module.exports.express = {
             res.exRender = res.render;
             res.render = (function(view, options, next) {
                 options = _(options).extend(res.vars);
+                options.toJS = {controller: res.vars.controller, action: res.vars.action};
                 res.exRender(view, {locals: options}, next);
             });
 

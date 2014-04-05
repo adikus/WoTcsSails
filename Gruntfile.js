@@ -44,6 +44,7 @@ module.exports = function (grunt) {
 
         clean: {
             dev: ['tmp/public/**'],
+            comp: ['tmp/public/comp/**'],
             less: ['tmp/public/comp/styles/bootstrap/**', 'tmp/public/comp/styles/*.less'],
             temp: ['tmp/public/comp-temp/**']
         },
@@ -140,7 +141,7 @@ module.exports = function (grunt) {
                 files: ['assets/**/*'],
 
                 // When assets are changed:
-                tasks: ['compileAssets', 'linkAssets']
+                tasks: ['clean:comp', 'compileAssets', 'linkAssets']
             }
         },
 
@@ -210,7 +211,7 @@ module.exports = function (grunt) {
         'newer:copy:dev',
         'newer:less',
         'clean:less',
-        'newer:md5:dev'
+        'md5:dev'
     ]);
 
     grunt.registerTask('linkAssets', [
