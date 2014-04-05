@@ -37,6 +37,7 @@ module.exports = function (grunt) {
     grunt.loadTasks(depsPath + '/grunt-contrib-cssmin/tasks');
     grunt.loadNpmTasks('grunt-md5');
     grunt.loadNpmTasks('grunt-file-creator');
+    grunt.loadNpmTasks('grunt-newer');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -197,6 +198,7 @@ module.exports = function (grunt) {
     grunt.registerTask('default',  function () {
         grunt.option('force', true);
         grunt.task.run([
+            'clean:dev',
             'compileAssets',
             'linkAssets',
             'watch'
@@ -204,17 +206,14 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('compileAssets', [
-        'clean:dev',
         'file-creator',
-        'copy:dev',
-        'less',
+        'newer:copy:dev',
+        'newer:less',
         'clean:less',
-        'md5:dev',
-        'clean:temp'
+        'newer:md5:dev'
     ]);
 
     grunt.registerTask('linkAssets', [
-        'file-creator',
         'sails-linker:devJs',
         'sails-linker:devCss'
     ]);

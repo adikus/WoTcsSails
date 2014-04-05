@@ -24,5 +24,8 @@
   "main": "app.js",
   "repository": "",
   "author": "",
-  "license": ""
+  "license": "",
+  "devDependencies": {
+    "grunt-newer": "~0.7.0"
+  }
 }
