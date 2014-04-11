@@ -2,16 +2,17 @@ var _ = require("underscore");
 var cluster = require("cluster");
 var Request = require("./../wotcs/Request");
 var Regions = require("./../services/RegionService");
+var PriorityQueue = require('priorityqueuejs');
 
 module.exports = (function () {
 
-    var queue = {};
-    var apis = {
-        clan: {
-            fields: 'description_html,abbreviation,motto,name,members.account_name,members.created_at,members.role',
-                idName: 'clan_id'
-        }
-    };
+    var queue = new PriorityQueue(function(a, b) {
+        var now = new Date();
+        var priorityA = a.priority*1000 + (now.getTime() - a.createdAt.getTime());
+        var priorityB = b.priority*1000 + (now.getTime() - b.createdAt.getTime());
+        return priorityA - priorityB;
+    });
+
     var config = {
         maxConcurrentReqs: 4,
         waitTime: 750,
@@ -21,6 +22,7 @@ module.exports = (function () {
     var ready = [];
     var registerCallback = null;
     var IDcounter = 0;
+    var lastError = '';
 
     var adapter = {
 
@@ -49,42 +51,87 @@ module.exports = (function () {
 
         ready: function(collectionName, options, cb) {
             if(!cb) cb = options;
-            cb(null, queue[collectionName].length < config.workers*config.maxConcurrentReqs);
+            cb(null, queue.size() < config.workers*config.maxConcurrentReqs);
         },
 
         find: function(collectionName, options, cb) {
             if(collectionName == 'clan'){
-                var params = {fields: apis[collectionName].fields};
-                params[apis[collectionName].idName] = options.where.id;
-                queue[collectionName].unshift({params: params, options: {
-                    subject: collectionName,
-                    method: 'info',
-                    region: Regions.getRegion(options.where.id)}, cb: function(err, result) {
-                    cb(err, result[options.where.id] ? [result[options.where.id]] : []);
-                }});
+                if(options.where && options.where.id){
+                    if(!options.where.id.length)options.where.id = [options.where.id];
+                    this.finders.clan.info(options.where.id, options.priority || 0, cb);
+                }else if(options.where && options.where.search){
+                    this.finders.clan.list(options.where.search, options.region, options.priority || 1, cb);
+                }
             }
         },
 
-        request: function(collectionName, options, cb) {
-            var params = {fields: apis[collectionName].fields};
-            params[apis[collectionName].idName] = options.IDs;
-            options.subject = collectionName;
-            queue[collectionName].push({params: params, options: options, cb: cb});
+        finders: {
+            clan: {
+                list: function(search, region, priority, cb) {
+                    queue.enq({
+                        params: {
+                            search: search,
+                            order_by: 'abbreviation',
+                            limit: 30
+                        },
+                        options: {
+                            region: region,
+                            method: 'list',
+                            subject: 'clan'
+                        },
+                        priority: priority,
+                        createdAt: new Date(),
+                        cb: cb
+                    });
+                },
+                info: function(IDs, priority, cb) {
+                    queue.enq({
+                        params: {
+                            fields: 'description_html,abbreviation,motto,name,members.account_name,members.created_at,members.role',
+                            clan_id: IDs.join(',')
+                        },
+                        options: {
+                            region: Regions.getRegion(IDs[0]),
+                            method: 'info',
+                            subject: 'clan'
+                        },
+                        priority: priority,
+                        createdAt: new Date(),
+                        cb: cb
+                    });
+                }
+            }
         }
 
     };
 
     var processResults = {
         clan: {
-            info: function(results) {
-                if(!results)return {};
+            list: function(results) {
                 try{
                     results = JSON.parse(results);
                 }catch(e){
-                    console.log(e);
-                    return {};
+                    lastError = e;
+                    return [];
                 }
-                if(results.status != 'ok')return {};
+                return results.data;
+            },
+            info: function(results) {
+                if(!results){
+                    lastError = 'Empty results'
+                    return [];
+                }
+                try{
+                    results = JSON.parse(results);
+                }catch(e){
+                    lastError = e;
+                    return [];
+                }
+                if(results.status != 'ok'){
+                    lastError = 'returned status: '+results.status;
+                    if(results.error)lastError += ' error: '+JSON.stringify(results.error);
+                    return [];
+                }
                 var ret = {};
                 _(results.data).each(function(clan, id) {
                     if(!clan){
@@ -112,7 +159,11 @@ module.exports = (function () {
                         members: members
                     };
                 });
-                return ret;
+                return _(ret).map(function(clan, id) {
+                    clan.attributes.id = id;
+                    clan.id = id;
+                    return clan;
+                });
             }
         }
     };
@@ -150,19 +201,19 @@ module.exports = (function () {
     }
 
     setInterval(function(){
-        _(queue).each(function(q, collectionName){
-            var max = _(ready).max();
-            if(q.length > 0 && max > 0){
-                var i = ready.indexOf(max);
-                var worker = workers[i];
-                ready[i]--;
-                var task = q.shift();
-                worker.send(['request', task.params, task.options, IDcounter]);
-                registerWorkerCallback(IDcounter++, function(err, result) {
-                    task.cb(err, processResults[collectionName][task.options.method](result));
-                });
-            }
-        });
+        var max = _(ready).max();
+        if(!queue.isEmpty() && max > 0){
+            var i = ready.indexOf(max);
+            var worker = workers[i];
+            ready[i]--;
+            var task = queue.deq();
+            worker.send(['request', task.params, task.options, IDcounter]);
+            registerWorkerCallback(IDcounter++, function(err, result) {
+                lastError = null;
+                var processed = processResults[task.options.subject][task.options.method](result);
+                task.cb(lastError || err, processed);
+            });
+        }
     }, 50);
 
     return adapter;

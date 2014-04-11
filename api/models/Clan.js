@@ -38,15 +38,16 @@ module.exports = {
         this.findOne(where, function(err, clan) {
             if (err) return callback(err, null);
             if(!clan && !isNaN(parseInt(where))){
-                ClanAPI.findOne(where, function(err, result) {
+                ClanAPI.findOne({where: {id: where}, priority: 1}, function(err, result) {
                     if(result){
-                        result.attributes.id = where;
                         Clan.create(result.attributes, function(err, clan) {
+                            callback(null, clan);
                             sails.log.info('New clan created', clan.id, clan.tag);
                         });
+                    }else{
+                        callback(null, null);
                     }
                 });
-                callback(null, Clan.new({id: where, status: 0, updating: true}));
             }else{
                 return callback(null, clan);
             }

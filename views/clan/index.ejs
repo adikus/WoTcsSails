@@ -1,7 +1,7 @@
 <h1 class="text-center">Top clans</h1>
 
-<% i = skip+1 %>
-<% pagination = new Pagination(skip, count, limit, link_to) %>
+<% var i = skip+1 %>
+<% var pagination = new Pagination(skip, count, limit, link_to) %>
 <div class="text-center">
     <%- pagination.render('/clans?') %>
 </div>

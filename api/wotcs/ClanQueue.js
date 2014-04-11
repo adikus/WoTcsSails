@@ -134,35 +134,34 @@ module.exports = (function(){
             setTimeout(function(){
                 if(self.pending[ID]){
                     sails.log.info('Task timeout:', ID);
-                    self.reportFail(ID);
+                    self.reportFail(ID, task.count);
                 }
-            },60000);
+            },10000);
 
             Clan.find().where(Clan.inRegionWhere(task.region)).skip(task.skip).limit(task.limit).sort({id: 1}).exec(function(err, clans) {
                 if(clans.length == 0){
-                    delete this.pending[ID];
+                    delete self.pending[ID];
                     return;
                 }
                 task.clans = clans;
                 task.count = clans.length;
 
-                var IDs = _(clans).pluck('id').join(',');
-
-                ClanAPI.request({IDs: IDs, method: 'info', region: task.region}, function(err, result){
-                    if(err || _(result).size() == 0) {
+                ClanAPI.find({where: {id: _(clans).pluck('id')}}, function(err, results){
+                    if(err || !results || results.length == 0) {
                         sails.log.warn('Request error', (err || 'Parse error'));
                         self.reportFail(ID, task.count);
                     }
                     else self.confirmSuccess(ID, task.count);
-                    self.updateClans(task, result);
+                    self.updateClans(task, results);
                 });
             });
         },
 
         updateClans: function(task, result) {
             _(task.clans).each(function(clan){
-                if(result[clan.id]){
-                    _(result[clan.id].attributes).each(function(value, key) {
+                var newClan = _(result).findWhere({id: clan.id});
+                if(newClan){
+                    _(newClan.attributes).each(function(value, key) {
                         clan[key] = value;
                     });
                     clan.save(function(err) {

@@ -208,8 +208,10 @@ module.exports = function (grunt) {
 
     grunt.registerTask('compileAssets', [
         'file-creator',
-        'newer:copy:dev',
-        'newer:less',
+        //'newer:copy:dev',
+        //'newer:less',
+        'copy:dev',
+        'less',
         'clean:less',
         'md5:dev'
     ]);

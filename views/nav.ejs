@@ -16,7 +16,7 @@
         <form class="navbar-form navbar-left" role="search" action="/search" method="get" id="nav_search_from">
             <%- partial('shared/region_dropdown', {class_name: 'navbar-left'}) %>
             <div class="form-group">
-                <%- input_field_tag('search', '', {placeholder: 'Search', class: 'form-control input-sm', id: 'nav_search'}) %>
+                <%- input_field_tag('search', 'text', {value: locals.search || '', placeholder: 'Search', class: 'form-control input-sm', id: 'nav_search'}) %>
             </div>
             <%- hidden_field_tag('region', region, {id: 'nav_region'}) %>
             <button class="btn">

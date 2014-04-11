@@ -15,7 +15,8 @@
     "express-helpers": "*",
     "express": "*",
     "grunt-md5": "~0.1.11",
-    "grunt-file-creator": "~0.1.1"
+    "grunt-file-creator": "~0.1.1",
+    "priorityqueuejs": "*"
   },
   "scripts": {
     "start": "node app.js",
