@@ -61,7 +61,8 @@ module.exports = (function () {
                     this.finders.clan.info(options.where.id, options.priority || 0, cb);
                 }else if(options.where && options.where.search){
                     this.finders.clan.list(options.where.search, options.region, options.priority || 1, cb);
-                }
+                }else if(options.where.search != undefined) cb('Please specify search.', null);
+                else cb('Incorrect find attributes.' ,null);
             }
         },
 

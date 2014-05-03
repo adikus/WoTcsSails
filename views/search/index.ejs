@@ -1,24 +1,32 @@
 <% regionName = RegionService.TranslatedRegion[region] %>
 <h1>Results <%= search ? 'for "'+search+'"' : '' %> in <%= regionName %> region</h1>
 
-<% var i = 1 %>
-<table class="table table-striped table-hover">
-	<thead>
-	<tr>
-		<th>#</th>
-		<th>Emblem</th>
-		<th>Tag</th>
-		<th>Name</th>
-	</tr>
-	</thead>
-	<tbody>
-	<% _.each(clans, function(clan){ %>
-	<tr class="clickable">
-		<td><%- link_to(i++, '/clans/'+clan.clan_id) %></td>
-		<td><%- img_tag(clan.emblems.medium) %></td>
-		<td><%= clan.abbreviation %></td>
-		<td><%= clan.name %></td>
-	</tr>
-	<% }); %>
-	</tbody>
-</table>
+<% if(err){ %>
+<div class="alert alert-danger">
+	<%= err %>
+</div>
+<%} else {%>
+
+	<% var i = 1 %>
+	<table class="table table-striped table-hover">
+		<thead>
+		<tr>
+			<th>#</th>
+			<th>Emblem</th>
+			<th>Tag</th>
+			<th>Name</th>
+		</tr>
+		</thead>
+		<tbody>
+		<% _.each(clans, function(clan){ %>
+		<tr class="clickable">
+			<td><%- link_to(i++, '/clans/'+clan.clan_id) %></td>
+			<td><%- img_tag(clan.emblems.medium) %></td>
+			<td><%= clan.abbreviation %></td>
+			<td><%= clan.name %></td>
+		</tr>
+		<% }); %>
+		</tbody>
+	</table>
+
+<%}%>
