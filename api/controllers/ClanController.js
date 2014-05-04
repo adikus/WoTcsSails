@@ -20,10 +20,16 @@ module.exports = {
     find: function(req, res) {
 
         function renderClan(clan, fromCache) {
-            if (req.wantsJSON) {
-                res.json({status: 'ok', clan: clan.getData(), fromCache: fromCache});
+            if (req.wantsJSON || req.path.slice(-5) == '.json' || req.path.slice(-6) == '.json/') {
+                clan.populateMembers(function(){
+                    res.json({status: 'ok', clan: clan.getData(), fromCache: fromCache});
+                });
             }else{
-                res.view({clan: clan});
+                clan.populateMembers(function(){
+                    clan.populateLastChanges(function() {
+                        res.view({clan: clan});
+                    });
+                });
             }
         }
 

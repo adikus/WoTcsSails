@@ -16,6 +16,10 @@ module.exports = {
     scheme: false,
     attributes: {
 
+        populateMembers: function(callback){callback(this.members);},
+
+        populateLastChanges: function(callback) {callback(this.lastChanges)},
+
         getData: function() {
             return Clan._instanceMethods.getData.apply(this);
         }
@@ -33,10 +37,13 @@ module.exports = {
                     sails.log.info('Save clan to cache', clan.id, clan.tag);
                     var data = clan.getData();
                     data.last_accessed_at = new Date();
-                    self.create(data, function(err) {
-                        if(err)sails.log.err(err);
+                    clan.populateMembers(function(members){
+                        data.members = members;
+                        self.create(data, function(err) {
+                            if(err)sails.log.err(err);
+                        });
+                        return callback(null, clan, false);
                     });
-                    return callback(null, clan, false);
                 });
             }else {
                 sails.log.verbose('Return clan from cache', cache.id, cache.tag);

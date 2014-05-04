@@ -8,11 +8,14 @@
  * http://sailsjs.org/#documentation
  */
 
+var _ = require('underscore');
+
 module.exports.bootstrap = function (cb) {
     require('express-helpers')(sails.express.app);
 
     sails.express.app.locals({
-        Pagination: require('../api/wotcs/Pagination')
+        Pagination: require('../api/wotcs/Pagination'),
+        _u: _
     });
 
     sails.clanQueue = new (require('../api/wotcs/ClanQueue.js'))();

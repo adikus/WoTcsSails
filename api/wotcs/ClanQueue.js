@@ -73,7 +73,7 @@ module.exports = (function(){
                             retryCount: 0
                         });
                     }
-
+                    //setTimeout(buildQueue,5000);
                     buildQueue();
                 });
             }, this);
@@ -119,7 +119,6 @@ module.exports = (function(){
         doTask: function(region) {
             var self = this;
             var ID = this.IDcounter++;
-
             var i = 0;
             while(i < this.toDo.length-1 && (this.tooManyErrors(i) || this.notInRegion(i, region))){i++;}
             if(i >= this.toDo.length-this.config.queueThreshold){
@@ -129,7 +128,6 @@ module.exports = (function(){
             var task = self.toDo.splice(i,1)[0];
             if(!task)return;
             this.pending[ID] = task;
-            //if(self.toDo.length % 10 == 0){console.log(self.toDo.length);}
 
             setTimeout(function(){
                 if(self.pending[ID]){
@@ -158,17 +156,7 @@ module.exports = (function(){
         },
 
         updateClans: function(task, result) {
-            _(task.clans).each(function(clan){
-                var newClan = _(result).findWhere({id: clan.id});
-                if(newClan){
-                    _(newClan.attributes).each(function(value, key) {
-                        clan[key] = value;
-                    });
-                    clan.save(function(err) {
-                        if(err)sails.log.error(err);
-                    });
-                }
-            });
+            Clan.updateClans(task.clans, result);
         },
 
         confirmSuccess: function(ID, count) {

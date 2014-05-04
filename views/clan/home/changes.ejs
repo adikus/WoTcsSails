@@ -2,19 +2,9 @@
     <%- link_to('All', '#', {class: 'active'}) %> / <%- link_to('Joined', '#') %> / <%- link_to('Left', '#') %>
 </div>
 <div class="list-group list-group-small">
-    <a href="#" class="list-group-item list-group-item-success">Player_1
-        <span class="badge">01/01/2014</span>
-    </a>
-    <a href="#" class="list-group-item list-group-item-danger">Player_2
-        <span class="badge">02/01/2014</span>
-    </a>
-    <a href="#" class="list-group-item list-group-item-success">Player_3
-        <span class="badge">03/01/2014</span>
-    </a>
-    <a href="#" class="list-group-item list-group-item-success">Player_4
-        <span class="badge">04/01/2014</span>
-    </a>
-    <a href="#" class="list-group-item list-group-item-danger">Player_5
-        <span class="badge">05/01/2014</span>
-    </a>
+		<% _u(clan.lastChanges || []).each(function(change){ %>
+			<a href="#" class="list-group-item list-group-item-<%= change.joined ? 'success' : 'danger' %>"><%= change.player_name %>
+				<span class="badge"><%= ('00'+change.changed_at.getDate()).slice(-2) %>/<%= ('00'+(change.changed_at.getMonth()+1)).slice(-2) %>/<%= change.changed_at.getFullYear() %></span>
+			</a>
+		<% }); %>
 </div>

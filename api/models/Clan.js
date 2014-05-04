@@ -6,6 +6,8 @@
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
 
+var _ = require('underscore');
+
 module.exports = {
 
     migrate: 'safe',
@@ -27,14 +29,91 @@ module.exports = {
                 motto: this.motto,
                 status: this.status,
                 updated_at: this.updatedAt,
-                updating: this.updating
+                updating: this.updating,
+                members: this.members
             };
+        },
+
+        populateMembers: function(callback) {
+            var self = this;
+            Player.find({clan_id: this.id}, function(err, players) {
+                self.members = players;
+                callback(players);
+            });
+        },
+
+        updateMembers: function(members) {
+            if(_(members).size() == 0){
+                //sails.log.debug('Received empty members list for', this.tag, this.id);
+                return;
+            }
+
+            var playersComparison = {};
+            _.each(members, function(member, id){
+                id = parseInt(id);
+                playersComparison[id] = {};
+                playersComparison[id].parsed = member;
+            });
+
+            var self = this;
+            this.populateMembers(function(){
+                _.each(self.members, function(member){
+                    var id = parseInt(member.id);
+                    if(!playersComparison[id]){
+                        playersComparison[id] = {};
+                    }
+                    playersComparison[id].loaded = member;
+                });
+
+                var add = {};
+                var remove = [];
+                _.each(playersComparison, function(comparison, id) {
+                    if(comparison.parsed && comparison.loaded){
+                        comparison.loaded.joined_at = comparison.parsed.joinedAt;
+                    }
+                    if(comparison.parsed && !comparison.loaded){
+                        add[id] = {name: comparison.parsed.name, joined_at: comparison.parsed.joinedAt, role: comparison.parsed.role }
+                    }else if(!comparison.parsed && comparison.loaded){
+                        remove.push(comparison.loaded);
+                    }
+                });
+
+                Player.addToClan(add, self.id, self.members);
+                Player.removeFromClan(remove, self.members);
+
+                ClanCache.findOne(self.id, function(err, cache) {
+                    if(cache){
+                        cache.members = self.members;
+                        cache.save(function(){});
+                    }
+                });
+
+                PlayerChange.saveChanges(self.id, self.members, self.updatedAt);
+            });
+        },
+
+        populateLastChanges: function(callback) {
+            var self = this;
+            QueryService.render('select_changes', {clan_id: this.id, month_where: 'true'}, function(sql) {
+                sql += ' LIMIT 5';
+                PlayerChange.query(sql, function(err, res) {
+                    var changes = _(res.rows).map(function(row) {
+                        return new PlayerChange._model(row);
+                    });
+                    ClanCache.findOne(self.id, function(err, cache) {
+                        if(cache){
+                            cache.lastChanges = changes;
+                            cache.save(function(){});
+                        }
+                    });
+                    self.lastChanges = changes;
+                    callback(changes);
+                });
+            });
         }
     },
 
     get: function(where, callback) {
-        var self = this;
-
         this.findOne(where, function(err, clan) {
             if (err) return callback(err, null);
             if(!clan && !isNaN(parseInt(where))){
@@ -50,6 +129,22 @@ module.exports = {
                 });
             }else{
                 return callback(null, clan);
+            }
+        });
+    },
+
+    updateClans: function(olds, news) {
+        _(olds).each(function(clan){
+            var newClan = _(news).findWhere({id: clan.id});
+            if(newClan){
+                _(newClan.attributes).each(function(value, key) {
+                    clan[key] = value;
+                });
+                clan.updateMembers(newClan.members);
+
+                clan.save(function(err) {
+                    if(err)sails.log.error(err);
+                });
             }
         });
     },
@@ -71,16 +166,13 @@ module.exports = {
     },
 
     new: function(attributes) {
-        attributes.getData = (function(){
-            return Clan._instanceMethods.getData.apply(attributes);
-        });
-        return attributes;
+        return new this._model(attributes);
     },
 
     afterCreate: function(values, next) {
         values.updating = false;
         ClanCache.update(values.id, values, function(err, cache) {
-            if(cache.length > 0)sails.log.info('Cache updated', cache[0].id, cache[0].tag);
+            //if(cache.length > 0)sails.log.info('Cache updated', cache[0].id, cache[0].tag);
         });
         next();
     },
@@ -88,7 +180,7 @@ module.exports = {
     afterUpdate: function(values, next) {
         values.updating = false;
         ClanCache.update(values.id, values, function(err, cache) {
-            if(cache.length > 0)sails.log.info('Cache updated', cache[0].id, cache[0].tag);
+            //if(cache.length > 0)sails.log.info('Cache updated', cache[0].id, cache[0].tag);
         });
 
         next();

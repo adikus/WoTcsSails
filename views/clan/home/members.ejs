@@ -1,26 +1,45 @@
 <div class="stats-switch">
-    99 Members
+    <%= clan.members.length %> Members (<%= _u(clan.members).where({role: 'private'}).length %> Soldiers
+	and <%= _u(clan.members).where({role: 'recruit'}).length %> Recruits)
 </div>
 <div class="list-group list-group-small">
     <a href="#" class="list-group-item">
         <span class="hidden-xs">Clan Commander</span>
         <span class="visible-xs">C:</span>
-        <span class="badge">commander</span>
+		    <% if(clan.members.length > 0){ %>
+	        <span class="badge"><%= _u(clan.members).findWhere({role: 'leader'}).name %></span>
+		    <% } %>
     </a>
     <a href="#" class="list-group-item">
         <span class="hidden-xs">Deputy Commander(s)</span>
         <span class="visible-xs">DC:</span>
-        <span class="badge">commander and 2 more</span>
+	      <% var DCs = _u(clan.members).where({role: 'vice_leader'}); %>
+	      <% if(DCs.length > 0){ %>
+        <span class="badge" title="<%= _u(DCs).pluck('name').join(', ')  %>" ><%= DCs[0].name %> <% if(DCs.length > 1){ %> and <%= DCs.length-1 %> more <% } %></span>
+	      <% } %>
     </a>
-    <a href="#" class="list-group-item">
+		<a href="#" class="list-group-item">
+			<span class="hidden-xs">Diplomat(s)</span>
+			<span class="visible-xs">D:</span>
+			<% var Ds = _u(clan.members).where({role: 'diplomat'}); %>
+			<% if(Ds.length > 0){ %>
+			<span class="badge" title="<%= _u(Ds).pluck('name').join(', ')  %>" ><%= Ds[0].name %> <% if(Ds.length > 1){ %> and <%= Ds.length-1 %> more <% } %></span>
+			<% } %>
+		</a>
+		<a href="#" class="list-group-item">
         <span class="hidden-xs">Company Commander(s)</span>
         <span class="visible-xs">CC:</span>
-        <span class="badge">commander and 1 more</span>
+	      <% var CCs = _u(clan.members).where({role: 'commander'}); %>
+	      <% if(CCs.length > 0){ %>
+	      <span class="badge" title="<%= _u(CCs).pluck('name').join(', ')  %>" ><%= CCs[0].name %> <% if(CCs.length > 1){ %> and <%= CCs.length-1 %> more <% } %></span>
+	      <% } %>
     </a>
     <a href="#" class="list-group-item">
         <span class="hidden-xs">Recruiter(s)</span>
         <span class="visible-xs">R:</span>
-        <span class="badge">commander and 3 more</span>
-    </a>
-    <a href="#" class="list-group-item">X Soldiers and Y Recruits</a>
+		    <% var Rs = _u(clan.members).where({role: 'recruiter'}); %>
+	      <% if(Rs.length > 0){ %>
+	      <span class="badge" title="<%= _u(Rs).pluck('name').join(', ') %>"><%= Rs[0].name %> <% if(DCs.length > 1){ %> and <%= Rs.length-1 %> more <% } %></span>
+	      <% } %>
+	  </a>
 </div>
