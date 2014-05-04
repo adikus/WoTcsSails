@@ -18,7 +18,15 @@ module.exports = {
 
         populateMembers: function(callback){callback(this.members);},
 
-        populateLastChanges: function(callback) {callback(this.lastChanges)},
+        populateLastChanges: function(callback) {
+            if(!this.lastChanges){
+                var clan = new Clan._model({id: this.id});
+                clan.populateLastChanges(function(lastChanges){
+                    callback(lastChanges);
+                });
+            }
+            else callback(this.lastChanges)
+        },
 
         getData: function() {
             return Clan._instanceMethods.getData.apply(this);

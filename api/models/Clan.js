@@ -88,7 +88,7 @@ module.exports = {
                     }
                 });
 
-                PlayerChange.saveChanges(self.id, self.members, self.updatedAt);
+                PlayerChange.saveChanges(self.id, self.members, self.updatedAtBefore);
             });
         },
 
@@ -141,7 +141,7 @@ module.exports = {
                     clan[key] = value;
                 });
                 clan.updateMembers(newClan.members);
-
+                clan.updatedAtBefore = clan.updatedAt;
                 clan.save(function(err) {
                     if(err)sails.log.error(err);
                 });
