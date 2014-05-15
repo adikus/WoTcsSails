@@ -1,7 +1,8 @@
 var _ = require("underscore");
 var http = require("http");
+var querystring = require("querystring");
 
-module.exports = (function(subject, method, region, params, callback) {
+module.exports = (function(subject, method, region, params, proxy, callback) {
 
     var request = {
         data: null,
@@ -63,9 +64,17 @@ module.exports = (function(subject, method, region, params, callback) {
         queryString += '&'+key+"="+value;
     });
     var path = '/2.0/'+subject+'/'+method+'/'+queryString;
+
+    var port = 80;
+    if(proxy){
+        path = '/?'+querystring.stringify({url: 'http://'+host+path});
+        host = 'proxy-1.wotcs.com';
+        port = 3000;
+    }
+
     var options = {
         host: host,
-        port: 80,
+        port: port,
         path: path,
         method: 'GET'
     };

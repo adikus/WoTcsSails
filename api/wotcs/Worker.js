@@ -22,7 +22,7 @@ function request(params, options, cbID) {
     currentReqs++;
     readyAnnounced = false;
     waitingSince = new Date();
-    new Request(options.subject, options.method, options.region, params, function(err, result) {
+    new Request(options.subject, options.method, options.region, params, config.proxy, function(err, result) {
         currentReqs--;
         process.send(['cb', cbID, err, result]);
     });

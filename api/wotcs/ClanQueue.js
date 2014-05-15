@@ -134,7 +134,7 @@ module.exports = (function(){
                     sails.log.info('Task timeout:', ID);
                     self.reportFail(ID, task.count);
                 }
-            },10000);
+            },25000);
 
             Clan.find().where(Clan.inRegionWhere(task.region)).skip(task.skip).limit(task.limit).sort({id: 1}).exec(function(err, clans) {
                 if(clans.length == 0){

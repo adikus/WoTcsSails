@@ -1,6 +1,5 @@
 var _ = require("underscore");
 var cluster = require("cluster");
-var Request = require("./../wotcs/Request");
 var Regions = require("./../services/RegionService");
 var PriorityQueue = require('priorityqueuejs');
 
@@ -16,7 +15,8 @@ module.exports = (function () {
     var config = {
         maxConcurrentReqs: 4,
         waitTime: 750,
-        workers: 3
+        workers: 3,
+        proxyWorkers: 2
     };
     var workers = [];
     var ready = [];
@@ -41,6 +41,9 @@ module.exports = (function () {
                 registerCallback = cb;
                 for(var i = 0; i < config.workers; i++){
                     addWorker(i);
+                }
+                for(i = config.workers; i < config.workers+config.proxyWorkers; i++){
+                    addWorker(i, true);
                 }
             }else cb();
         },
@@ -118,10 +121,6 @@ module.exports = (function () {
                 return results.data;
             },
             info: function(results) {
-                if(!results){
-                    lastError = 'Empty results'
-                    return [];
-                }
                 try{
                     results = JSON.parse(results);
                 }catch(e){
@@ -174,11 +173,11 @@ module.exports = (function () {
         callbacks[ID] = cb;
     }
 
-    function addWorker(i){
+    function addWorker(i, proxy){
         var worker = cluster.fork();
         ready[i] = 0;
         worker.on('online', function() {
-            worker.send(['config',config]);
+            worker.send(['config',_(config).extend({proxy: proxy})]);
             ready[i] = config.maxConcurrentReqs;
             if(_(ready).without(0).length == config.workers){
                 console.log('Workers ready');
@@ -210,9 +209,13 @@ module.exports = (function () {
             var task = queue.deq();
             worker.send(['request', task.params, task.options, IDcounter]);
             registerWorkerCallback(IDcounter++, function(err, result) {
-                lastError = null;
-                var processed = processResults[task.options.subject][task.options.method](result);
-                task.cb(lastError || err, processed);
+                if(err){
+                    task.cb(err, null);
+                }else{
+                    lastError = null;
+                    var processed = processResults[task.options.subject][task.options.method](result);
+                    task.cb(lastError || err, processed);
+                }
             });
         }
     }, 50);

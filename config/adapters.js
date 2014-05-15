@@ -18,7 +18,7 @@ module.exports.adapters = {
 
     pg: {
         module: 'sails-postgresql-adikus',
-        url: process.env.API_POSTGRE || process.env.DATABASE_URL,
+        url: process.env.WOTCS_PG || process.env.DATABASE_URL,
         batchSaves: true,
         pool: false
     },
